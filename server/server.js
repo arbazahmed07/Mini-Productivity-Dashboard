@@ -8,7 +8,7 @@ const usersRoutes = require('./routes/users');
 const tasksRoutes = require('./routes/tasks');
 const goalsRoutes = require('./routes/goals');
 const { PORT } = require('./config/environment');
-const path = require('path');
+// const path = require('path');
 
 // Connect to MongoDB
 connectDB();
