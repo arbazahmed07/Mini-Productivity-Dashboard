@@ -5,7 +5,6 @@ BoostBoard is a comprehensive productivity dashboard application designed to hel
 ## Features
 
 - **Task Management**: Create, organize, and prioritize tasks with drag-and-drop functionality
-- **Progress Tracking**: Visual charts and progress indicators to monitor productivity
 - **Dashboard Customization**: Personalize your productivity workspace
 - **User Authentication**: Secure login and registration system
 - **Responsive Design**: Works seamlessly across desktop and mobile devices
@@ -20,9 +19,6 @@ BoostBoard is a comprehensive productivity dashboard application designed to hel
 - Shadcn UI components
 - Tailwind CSS for styling
 - React Query for data fetching
-- React Hook Form for form handling
-- Zod for validation
-
 ### Backend
 - Node.js with Express
 - MongoDB with Mongoose ODM
