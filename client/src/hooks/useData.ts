@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { dataService, Task, Goal, DailyTaskModel, UserActivity, StreakInfo } from '@/services/dataService';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -14,7 +14,7 @@ export const useData = () => {
   const [userActivity, setUserActivity] = useState<UserActivity | null>(null);
   const { user } = useAuth();
 
-  const refreshData = async () => {
+  const refreshData = useCallback(async () => {
     if (!user) return;
     
     setTasks(dataService.getTasks(user.id));
@@ -27,7 +27,7 @@ export const useData = () => {
     } catch (error) {
       console.error('Failed to fetch streak info', error);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -45,7 +45,7 @@ export const useData = () => {
     };
     
     trackUserLogin();
-  }, [user]);
+  }, [user, refreshData]);
 
   const addTask = (task: Omit<Task, 'id' | 'createdAt' | 'userId'>) => {
     if (!user) return null;
@@ -54,7 +54,7 @@ export const useData = () => {
       ...task,
       userId: user.id
     });
-    refreshData();
+    refreshData(); // This will update both tasks and streak
     return newTask;
   };
 
@@ -62,7 +62,7 @@ export const useData = () => {
     if (!user) return null;
     
     const updatedTask = dataService.updateTask(taskId, updates, user.id);
-    refreshData();
+    refreshData(); // This will update both tasks and streak
     return updatedTask;
   };
 
@@ -70,7 +70,7 @@ export const useData = () => {
     if (!user) return false;
     
     const success = dataService.deleteTask(taskId, user.id);
-    refreshData();
+    refreshData(); // This will update both tasks and streak
     return success;
   };
 
@@ -81,6 +81,9 @@ export const useData = () => {
       ...goal,
       userId: user.id
     });
+    
+    // Immediately update local goals state to avoid UI delay
+    setGoals(prev => [...prev, newGoal]);
     refreshData();
     return newGoal;
   };
@@ -89,6 +92,12 @@ export const useData = () => {
     if (!user) return null;
     
     const updatedGoal = dataService.updateGoal(goalId, updates, user.id);
+    
+    // Immediately update local goals state to avoid UI delay
+    if (updatedGoal) {
+      setGoals(prev => prev.map(g => g.id === goalId ? updatedGoal : g));
+    }
+    
     refreshData();
     return updatedGoal;
   };
@@ -97,6 +106,12 @@ export const useData = () => {
     if (!user) return false;
     
     const success = dataService.deleteGoal(goalId, user.id);
+    
+    // Immediately update local goals state to avoid UI delay
+    if (success) {
+      setGoals(prev => prev.filter(g => g.id !== goalId));
+    }
+    
     refreshData();
     return success;
   };

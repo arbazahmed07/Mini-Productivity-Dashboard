@@ -1,5 +1,5 @@
 module.exports = {
   PORT: process.env.PORT || 5000,
-  MONGO_URI: process.env.MONGO_URI || 'mongodb://localhost:27017/productivity-app',
+  MONGO_URI: "mongodb+srv://arbazahmed1729:Mdarbaz123@cluster0.tledykx.mongodb.net/assgn",
   JWT_SECRET: process.env.JWT_SECRET || 'mysecrettoken'
 };

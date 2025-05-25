@@ -4,8 +4,13 @@ import { useData } from "@/hooks/useData";
 import { useState, useEffect } from "react";
 
 const StreakTracker = () => {
-  const { streak, userActivity } = useData();
+  const { streak, userActivity, refreshData } = useData();
   const [maxStreak, setMaxStreak] = useState(0);
+  
+  // Add effect to refresh data when component mounts
+  useEffect(() => {
+    refreshData();
+  }, [refreshData]);
   
   useEffect(() => {
     if (userActivity?.maxLoginStreak) {

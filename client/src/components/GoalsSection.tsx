@@ -69,6 +69,11 @@ const GoalsSection = () => {
         0,
         Math.min(goal.target, goal.progress + increment)
       );
+      
+      // First update local UI for immediate feedback
+      const updatedGoal = { ...goal, progress: newProgress };
+      
+      // Then update the backend
       updateGoal(id, { progress: newProgress });
 
       if (newProgress === goal.target && increment > 0) {

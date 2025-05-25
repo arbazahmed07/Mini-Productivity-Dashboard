@@ -75,7 +75,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const data = await response.json();
       
       if (!response.ok) {
-        setError(data.message || 'Login failed');
+        console.error('Login failed:', response.status, data);
+        setError(data.message || `Login failed with status: ${response.status}`);
+        return false;
+      }
+
+      // Make sure we have the expected data
+      if (!data.token || !data.user) {
+        console.error('Invalid server response:', data);
+        setError('Server returned an invalid response');
         return false;
       }
 
@@ -94,7 +102,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return true;
     } catch (error) {
       console.error('Login error:', error);
-      setError('Network error. Please try again.');
+      setError(error instanceof Error ? error.message : 'Network error. Please try again.');
       return false;
     } finally {
       setLoading(false);
