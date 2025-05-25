@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Moon, Sun, Target, Flame, Calendar, CheckSquare } from "lucide-react";
 import TaskManager from "@/components/TaskManager";
 import GoalsSection from "@/components/GoalsSection";
@@ -29,9 +29,12 @@ const Index = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const updateStats = () => {
-    const goals = dataService.getGoals();
-    const { loginStreak, taskStreak, combinedStreak } = dataService.getStreak();
+  const updateStats = async () => {
+    // Get the current user ID from the service or use a default
+    const userId = "default-user"; // Replace with actual user ID if authentication is implemented
+    const goals = dataService.getGoals(userId);
+    const streakInfo = await dataService.getStreak();
+    const { loginStreak, taskStreak, combinedStreak } = streakInfo;
     
     setStats({
       totalGoals: goals.length,
