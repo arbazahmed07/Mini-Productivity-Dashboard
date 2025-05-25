@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
-// API URL (should be in env variables)
-// const API_URL = 'http://localhost:5000/api';
-const API_URL = 'https://mini-productivity-dashboard-1.onrender.com/api';
+// Update API URL to match the new domain
+const API_URL = 'http://localhost:5000/api';
+// const API_URL = 'https://mini-productivity-dashboard-1.onrender.com/api';
 
 interface Profile {
   bio: string;
@@ -162,7 +162,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return null;
       }
       
-      const response = await fetch(`${API_URL}/profile`, {
+      const response = await fetch(`${API_URL}/profile/me`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -207,7 +207,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         return false;
       }
       
-      const response = await fetch(`${API_URL}/profile`, {
+      // Use the correct endpoint path that matches the server route
+      const response = await fetch(`${API_URL}/profile/update`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -216,13 +217,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         body: JSON.stringify(profileData)
       });
 
-      const data = await response.json();
-      
+      // Check if response is ok before trying to parse JSON
       if (!response.ok) {
-        setError(data.message || 'Failed to update profile');
+        const contentType = response.headers.get('content-type');
+        let errorMessage = `Failed to update profile: ${response.status} ${response.statusText}`;
+        
+        if (contentType && contentType.includes('application/json')) {
+          try {
+            const data = await response.json();
+            errorMessage = data.message || errorMessage;
+          } catch (e) {
+            console.error('Failed to parse error response as JSON', e);
+          }
+        } else {
+          // For non-JSON responses (e.g. HTML error pages)
+          const text = await response.text();
+          console.error('Server returned non-JSON response:', text.substring(0, 200) + '...');
+        }
+        
+        setError(errorMessage);
         return false;
       }
 
+      const data = await response.json();
+      
       // Transform MongoDB _id to id if needed
       const userData: User = {
         id: data._id || data.id,
@@ -236,7 +254,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       return true;
     } catch (error) {
       console.error('Update profile error:', error);
-      setError('Network error. Please try again.');
+      setError(error instanceof Error ? error.message : 'Network error. Please try again.');
       return false;
     } finally {
       setLoading(false);

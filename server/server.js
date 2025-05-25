@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/api', authRoutes);
-app.use('/api', profileRoutes);
+app.use('/api/profile', profileRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/tasks', tasksRoutes);
 app.use('/api/goals', goalsRoutes);

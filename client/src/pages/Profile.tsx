@@ -1,11 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import ProfileForm from '../components/ProfileForm';
 import { Link } from 'react-router-dom';
 
+// Local fallback image as data URI - a simple user icon with gray background
+const DEFAULT_AVATAR = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a0aec0' width='150' height='150'%3E%3Crect width='24' height='24' fill='%23e2e8f0' rx='12' /%3E%3Cpath d='M12 14.25c2.485 0 4.5-2.015 4.5-4.5S14.485 5.25 12 5.25s-4.5 2.015-4.5 4.5 2.015 4.5 4.5 4.5zm0 2.25c-3 0-9 1.508-9 4.5V19.5h18v-1.5c0-2.992-6-4.5-9-4.5z' fill='%236b7280'/%3E%3C/svg%3E";
+
 const ProfilePage: React.FC = () => {
   const { user, isAuthenticated } = useAuth();
+  const [imageError, setImageError] = useState(false);
   
+  // Reset image error state when user changes
+  React.useEffect(() => {
+    setImageError(false);
+  }, [user?.profile?.avatarUrl]);
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex justify-center items-center p-4">
@@ -27,11 +36,12 @@ const ProfilePage: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 mb-6">
           <div className="flex-shrink-0 mb-4 sm:mb-0 flex justify-center">
             <img
-              src={user?.profile?.avatarUrl || 'https://via.placeholder.com/150?text=No+Image'}
+              src={imageError ? DEFAULT_AVATAR : (user?.profile?.avatarUrl || DEFAULT_AVATAR)}
               alt={user?.name || 'User'}
               className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover"
-              onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                e.currentTarget.src = 'https://via.placeholder.com/150?text=No+Image';
+              onError={(e) => {
+                console.log('Image failed to load, using fallback');
+                setImageError(true);
               }}
             />
           </div>
