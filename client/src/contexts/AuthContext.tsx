@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 // Update API URL to match the new domain
-const API_URL = 'http://localhost:5000/api';
-// const API_URL = 'https://mini-productivity-dashboard-1.onrender.com/api';
+// const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://mini-productivity-dashboard-1.onrender.com/api';
 
 interface Profile {
   bio: string;
