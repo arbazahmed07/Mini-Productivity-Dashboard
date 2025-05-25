@@ -1,8 +1,8 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 // API URL (should be in env variables)
-const API_URL = 'http://localhost:5000/api';
-// const API_URL = 'https://mini-productivity-dashboard.onrender.com/api';
+// const API_URL = 'http://localhost:5000/api';
+const API_URL = 'https://mini-productivity-dashboard.onrender.com/api';
 
 interface Profile {
   bio: string;
